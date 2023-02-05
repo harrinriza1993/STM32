@@ -1,0 +1,185 @@
+ARM GAS  C:\Users\lalbo\AppData\Local\Temp\ccapMi55.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"input.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.input_init,"ax",%progbits
+  20              		.align	1
+  21              		.global	input_init
+  22              		.syntax unified
+  23              		.thumb
+  24              		.thumb_func
+  26              	input_init:
+  27              	.LVL0:
+  28              	.LFB292:
+  29              		.file 1 "drv/input/input.c"
+   1:drv/input/input.c **** #include "input.h"
+   2:drv/input/input.c **** 
+   3:drv/input/input.c **** void input_init(GPIO_TypeDef* GPIOx, uint16_t GPIO_PIN)
+   4:drv/input/input.c **** {
+  30              		.loc 1 4 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 24
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		.loc 1 4 1 is_stmt 0 view .LVU1
+  35 0000 00B5     		push	{lr}
+  36              	.LCFI0:
+  37              		.cfi_def_cfa_offset 4
+  38              		.cfi_offset 14, -4
+  39 0002 87B0     		sub	sp, sp, #28
+  40              	.LCFI1:
+  41              		.cfi_def_cfa_offset 32
+   5:drv/input/input.c ****     if (GPIOx == GPIOE)
+  42              		.loc 1 5 5 is_stmt 1 view .LVU2
+  43              		.loc 1 5 8 is_stmt 0 view .LVU3
+  44 0004 0D4B     		ldr	r3, .L5
+  45 0006 9842     		cmp	r0, r3
+  46 0008 0AD0     		beq	.L4
+  47              	.L2:
+   6:drv/input/input.c ****     {
+   7:drv/input/input.c ****         __HAL_RCC_GPIOE_CLK_ENABLE();
+  48              		.loc 1 7 9 is_stmt 1 discriminator 1 view .LVU4
+   8:drv/input/input.c ****     }
+   9:drv/input/input.c **** 
+  10:drv/input/input.c ****     GPIO_InitTypeDef GPIO_Init;
+ARM GAS  C:\Users\lalbo\AppData\Local\Temp\ccapMi55.s 			page 2
+
+
+  49              		.loc 1 10 5 discriminator 1 view .LVU5
+  11:drv/input/input.c **** 
+  12:drv/input/input.c ****     GPIO_Init.Pin = GPIO_PIN;
+  50              		.loc 1 12 5 discriminator 1 view .LVU6
+  51              		.loc 1 12 19 is_stmt 0 discriminator 1 view .LVU7
+  52 000a 0191     		str	r1, [sp, #4]
+  13:drv/input/input.c ****     GPIO_Init.Mode = GPIO_MODE_INPUT;
+  53              		.loc 1 13 5 is_stmt 1 discriminator 1 view .LVU8
+  54              		.loc 1 13 20 is_stmt 0 discriminator 1 view .LVU9
+  55 000c 0023     		movs	r3, #0
+  56 000e 0293     		str	r3, [sp, #8]
+  14:drv/input/input.c ****     GPIO_Init.Pull = GPIO_NOPULL;
+  57              		.loc 1 14 5 is_stmt 1 discriminator 1 view .LVU10
+  58              		.loc 1 14 20 is_stmt 0 discriminator 1 view .LVU11
+  59 0010 0393     		str	r3, [sp, #12]
+  15:drv/input/input.c ****     GPIO_Init.Alternate = 0;
+  60              		.loc 1 15 5 is_stmt 1 discriminator 1 view .LVU12
+  61              		.loc 1 15 25 is_stmt 0 discriminator 1 view .LVU13
+  62 0012 0593     		str	r3, [sp, #20]
+  16:drv/input/input.c **** 
+  17:drv/input/input.c ****     HAL_GPIO_Init(GPIOx, &GPIO_Init);
+  63              		.loc 1 17 5 is_stmt 1 discriminator 1 view .LVU14
+  64 0014 01A9     		add	r1, sp, #4
+  65              	.LVL1:
+  66              		.loc 1 17 5 is_stmt 0 discriminator 1 view .LVU15
+  67 0016 FFF7FEFF 		bl	HAL_GPIO_Init
+  68              	.LVL2:
+  18:drv/input/input.c **** }
+  69              		.loc 1 18 1 discriminator 1 view .LVU16
+  70 001a 07B0     		add	sp, sp, #28
+  71              	.LCFI2:
+  72              		.cfi_remember_state
+  73              		.cfi_def_cfa_offset 4
+  74              		@ sp needed
+  75 001c 5DF804FB 		ldr	pc, [sp], #4
+  76              	.LVL3:
+  77              	.L4:
+  78              	.LCFI3:
+  79              		.cfi_restore_state
+   7:drv/input/input.c ****     }
+  80              		.loc 1 7 9 is_stmt 1 view .LVU17
+  81              	.LBB2:
+   7:drv/input/input.c ****     }
+  82              		.loc 1 7 9 view .LVU18
+   7:drv/input/input.c ****     }
+  83              		.loc 1 7 9 view .LVU19
+  84 0020 03F17843 		add	r3, r3, #-134217728
+  85 0024 03F50033 		add	r3, r3, #131072
+  86 0028 DA6C     		ldr	r2, [r3, #76]
+  87 002a 42F01002 		orr	r2, r2, #16
+  88 002e DA64     		str	r2, [r3, #76]
+   7:drv/input/input.c ****     }
+  89              		.loc 1 7 9 view .LVU20
+  90 0030 DB6C     		ldr	r3, [r3, #76]
+  91 0032 03F01003 		and	r3, r3, #16
+  92 0036 0093     		str	r3, [sp]
+   7:drv/input/input.c ****     }
+ARM GAS  C:\Users\lalbo\AppData\Local\Temp\ccapMi55.s 			page 3
+
+
+  93              		.loc 1 7 9 view .LVU21
+  94 0038 009B     		ldr	r3, [sp]
+  95 003a E6E7     		b	.L2
+  96              	.L6:
+  97              		.align	2
+  98              	.L5:
+  99 003c 00100048 		.word	1207963648
+ 100              	.LBE2:
+ 101              		.cfi_endproc
+ 102              	.LFE292:
+ 104              		.section	.text.read_pin,"ax",%progbits
+ 105              		.align	1
+ 106              		.global	read_pin
+ 107              		.syntax unified
+ 108              		.thumb
+ 109              		.thumb_func
+ 111              	read_pin:
+ 112              	.LVL4:
+ 113              	.LFB293:
+  19:drv/input/input.c **** 
+  20:drv/input/input.c **** GPIO_PinState read_pin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
+  21:drv/input/input.c **** {
+ 114              		.loc 1 21 1 view -0
+ 115              		.cfi_startproc
+ 116              		@ args = 0, pretend = 0, frame = 0
+ 117              		@ frame_needed = 0, uses_anonymous_args = 0
+ 118              		.loc 1 21 1 is_stmt 0 view .LVU23
+ 119 0000 08B5     		push	{r3, lr}
+ 120              	.LCFI4:
+ 121              		.cfi_def_cfa_offset 8
+ 122              		.cfi_offset 3, -8
+ 123              		.cfi_offset 14, -4
+  22:drv/input/input.c ****     return HAL_GPIO_ReadPin(GPIOx, GPIO_Pin);
+ 124              		.loc 1 22 5 is_stmt 1 view .LVU24
+ 125              		.loc 1 22 12 is_stmt 0 view .LVU25
+ 126 0002 FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 127              	.LVL5:
+  23:drv/input/input.c **** }...
+ 128              		.loc 1 23 1 view .LVU26
+ 129 0006 08BD     		pop	{r3, pc}
+ 130              		.cfi_endproc
+ 131              	.LFE293:
+ 133              		.text
+ 134              	.Letext0:
+ 135              		.file 2 "c:\\program files (x86)\\gnu arm embedded toolchain\\10 2021.10\\arm-none-eabi\\include\\
+ 136              		.file 3 "c:\\program files (x86)\\gnu arm embedded toolchain\\10 2021.10\\arm-none-eabi\\include\\
+ 137              		.file 4 "Drivers/CMSIS/Device/ST/STM32L4xx/Include/stm32l4r5xx.h"
+ 138              		.file 5 "Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_gpio.h"
+ARM GAS  C:\Users\lalbo\AppData\Local\Temp\ccapMi55.s 			page 4
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 input.c
+C:\Users\lalbo\AppData\Local\Temp\ccapMi55.s:20     .text.input_init:00000000 $t
+C:\Users\lalbo\AppData\Local\Temp\ccapMi55.s:26     .text.input_init:00000000 input_init
+C:\Users\lalbo\AppData\Local\Temp\ccapMi55.s:99     .text.input_init:0000003c $d
+C:\Users\lalbo\AppData\Local\Temp\ccapMi55.s:105    .text.read_pin:00000000 $t
+C:\Users\lalbo\AppData\Local\Temp\ccapMi55.s:111    .text.read_pin:00000000 read_pin
+
+UNDEFINED SYMBOLS
+HAL_GPIO_Init
+HAL_GPIO_ReadPin

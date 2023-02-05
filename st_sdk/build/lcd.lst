@@ -1,0 +1,658 @@
+ARM GAS  C:\Users\lalbo\AppData\Local\Temp\ccTtuBDr.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"lcd.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.enable_pulse,"ax",%progbits
+  20              		.align	1
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  25              	enable_pulse:
+  26              	.LFB297:
+  27              		.file 1 "drv/lcd/lcd.c"
+   1:drv/lcd/lcd.c **** #include "lcd.h"
+   2:drv/lcd/lcd.c **** #include "output.h"
+   3:drv/lcd/lcd.c **** 
+   4:drv/lcd/lcd.c **** #include <stdio.h>
+   5:drv/lcd/lcd.c **** 
+   6:drv/lcd/lcd.c **** /*
+   7:drv/lcd/lcd.c ****     EN: D9: PD15 
+   8:drv/lcd/lcd.c ****     RS: D8: PF12
+   9:drv/lcd/lcd.c **** 
+  10:drv/lcd/lcd.c ****     LCD_D7: D7: PF13
+  11:drv/lcd/lcd.c ****     LCD_D6: D6: PE9
+  12:drv/lcd/lcd.c ****     LCD_D5: D5: PE11
+  13:drv/lcd/lcd.c ****     LCD_D4: D4: PF14
+  14:drv/lcd/lcd.c **** 
+  15:drv/lcd/lcd.c ****     Ardiuno pinout: http://store-usa.arduino.cc/products/arduino-uno-rev3
+  16:drv/lcd/lcd.c ****     STM32L4r5zi nucleo pinout: https://os.mbed.com/platforms/NUCLEO-L4R5ZI/
+  17:drv/lcd/lcd.c **** */
+  18:drv/lcd/lcd.c **** 
+  19:drv/lcd/lcd.c **** #define D4_PIN GPIO_PIN_14
+  20:drv/lcd/lcd.c **** #define D5_PIN GPIO_PIN_11
+  21:drv/lcd/lcd.c **** #define D6_PIN GPIO_PIN_9
+  22:drv/lcd/lcd.c **** #define D7_PIN GPIO_PIN_13
+  23:drv/lcd/lcd.c **** #define RS_PIN GPIO_PIN_12
+  24:drv/lcd/lcd.c **** #define EN_PIN GPIO_PIN_15
+  25:drv/lcd/lcd.c **** 
+  26:drv/lcd/lcd.c **** #define D4_PORT GPIOF
+  27:drv/lcd/lcd.c **** #define D5_PORT GPIOE
+  28:drv/lcd/lcd.c **** #define D6_PORT GPIOE
+  29:drv/lcd/lcd.c **** #define D7_PORT GPIOF
+  30:drv/lcd/lcd.c **** #define RS_PORT GPIOF
+  31:drv/lcd/lcd.c **** #define EN_PORT GPIOD
+ARM GAS  C:\Users\lalbo\AppData\Local\Temp\ccTtuBDr.s 			page 2
+
+
+  32:drv/lcd/lcd.c **** 
+  33:drv/lcd/lcd.c **** #define LCD_CMD_DISPLAY_ON 0x0C
+  34:drv/lcd/lcd.c **** #define LCD_CMD_4BIT_MODE 0x28
+  35:drv/lcd/lcd.c **** #define LCD_CMD_CLEAR 0x01
+  36:drv/lcd/lcd.c **** #define LCD_CMD_SELECT_LINE1 0x80
+  37:drv/lcd/lcd.c **** #define LCD_CMD_SELECT_LINE2 0xC0
+  38:drv/lcd/lcd.c **** 
+  39:drv/lcd/lcd.c **** static void send_data(unsigned char data);
+  40:drv/lcd/lcd.c **** static void send_command(unsigned char cmd);
+  41:drv/lcd/lcd.c **** static void write_data(unsigned char data);
+  42:drv/lcd/lcd.c **** static void enable_pulse();
+  43:drv/lcd/lcd.c **** 
+  44:drv/lcd/lcd.c **** /**
+  45:drv/lcd/lcd.c ****  * @brief Lcd pin initilization for lcd keyboard shield.
+  46:drv/lcd/lcd.c ****  */
+  47:drv/lcd/lcd.c **** void lcd_init()
+  48:drv/lcd/lcd.c **** {
+  49:drv/lcd/lcd.c ****     outputinit(GPIOF, GPIO_PIN_14 | GPIO_PIN_13 | GPIO_PIN_12);
+  50:drv/lcd/lcd.c ****     outputinit(GPIOE, GPIO_PIN_11 | GPIO_PIN_9);
+  51:drv/lcd/lcd.c ****     outputinit(GPIOD, GPIO_PIN_15);
+  52:drv/lcd/lcd.c **** 
+  53:drv/lcd/lcd.c ****     clearpin(GPIOF, GPIO_PIN_14 | GPIO_PIN_13 | GPIO_PIN_12);
+  54:drv/lcd/lcd.c ****     clearpin(GPIOE, GPIO_PIN_11 | GPIO_PIN_9);
+  55:drv/lcd/lcd.c ****     clearpin(GPIOD, GPIO_PIN_15);
+  56:drv/lcd/lcd.c **** 
+  57:drv/lcd/lcd.c ****     /*Display on */
+  58:drv/lcd/lcd.c ****     send_command(LCD_CMD_DISPLAY_ON);
+  59:drv/lcd/lcd.c ****     HAL_Delay(50);
+  60:drv/lcd/lcd.c ****     send_command(LCD_CMD_4BIT_MODE);
+  61:drv/lcd/lcd.c ****     HAL_Delay(50);
+  62:drv/lcd/lcd.c ****     send_command(LCD_CMD_CLEAR);
+  63:drv/lcd/lcd.c ****     HAL_Delay(50);
+  64:drv/lcd/lcd.c **** }
+  65:drv/lcd/lcd.c **** 
+  66:drv/lcd/lcd.c **** /**
+  67:drv/lcd/lcd.c ****  * @brief Displays string on the lcd
+  68:drv/lcd/lcd.c ****  * @param[in] data_name - String to display
+  69:drv/lcd/lcd.c ****  * @param[in] line_selection - Select the line (1: First line, 2: Second line)
+  70:drv/lcd/lcd.c ****  */
+  71:drv/lcd/lcd.c **** void lcd_display(unsigned char *data_name, int line_selection) 
+  72:drv/lcd/lcd.c **** {
+  73:drv/lcd/lcd.c ****   if(line_selection == 1)
+  74:drv/lcd/lcd.c ****   {
+  75:drv/lcd/lcd.c ****     send_command(LCD_CMD_SELECT_LINE1);
+  76:drv/lcd/lcd.c ****   }
+  77:drv/lcd/lcd.c ****   else if(line_selection == 2)
+  78:drv/lcd/lcd.c ****   {
+  79:drv/lcd/lcd.c ****     send_command(LCD_CMD_SELECT_LINE2);
+  80:drv/lcd/lcd.c ****   }
+  81:drv/lcd/lcd.c **** 
+  82:drv/lcd/lcd.c ****   while(*data_name != '\0')
+  83:drv/lcd/lcd.c ****   {
+  84:drv/lcd/lcd.c ****     send_data(*data_name);
+  85:drv/lcd/lcd.c ****     data_name++;
+  86:drv/lcd/lcd.c ****   }
+  87:drv/lcd/lcd.c **** }
+  88:drv/lcd/lcd.c **** 
+ARM GAS  C:\Users\lalbo\AppData\Local\Temp\ccTtuBDr.s 			page 3
+
+
+  89:drv/lcd/lcd.c **** /**
+  90:drv/lcd/lcd.c ****  * @brief Enable the pulse (on and off the en pin)
+  91:drv/lcd/lcd.c ****  */
+  92:drv/lcd/lcd.c **** static void enable_pulse()
+  93:drv/lcd/lcd.c **** {
+  28              		.loc 1 93 1 view -0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 10B5     		push	{r4, lr}
+  33              	.LCFI0:
+  34              		.cfi_def_cfa_offset 8
+  35              		.cfi_offset 4, -8
+  36              		.cfi_offset 14, -4
+  94:drv/lcd/lcd.c ****   HAL_GPIO_WritePin(EN_PORT, EN_PIN, GPIO_PIN_SET);
+  37              		.loc 1 94 3 view .LVU1
+  38 0002 0A4C     		ldr	r4, .L3
+  39 0004 0122     		movs	r2, #1
+  40 0006 4FF40041 		mov	r1, #32768
+  41 000a 2046     		mov	r0, r4
+  42 000c FFF7FEFF 		bl	HAL_GPIO_WritePin
+  43              	.LVL0:
+  95:drv/lcd/lcd.c ****   HAL_Delay(20);
+  44              		.loc 1 95 3 view .LVU2
+  45 0010 1420     		movs	r0, #20
+  46 0012 FFF7FEFF 		bl	HAL_Delay
+  47              	.LVL1:
+  96:drv/lcd/lcd.c ****   HAL_GPIO_WritePin(EN_PORT, EN_PIN, GPIO_PIN_RESET);
+  48              		.loc 1 96 3 view .LVU3
+  49 0016 0022     		movs	r2, #0
+  50 0018 4FF40041 		mov	r1, #32768
+  51 001c 2046     		mov	r0, r4
+  52 001e FFF7FEFF 		bl	HAL_GPIO_WritePin
+  53              	.LVL2:
+  97:drv/lcd/lcd.c ****   HAL_Delay(20);
+  54              		.loc 1 97 3 view .LVU4
+  55 0022 1420     		movs	r0, #20
+  56 0024 FFF7FEFF 		bl	HAL_Delay
+  57              	.LVL3:
+  98:drv/lcd/lcd.c **** }
+  58              		.loc 1 98 1 is_stmt 0 view .LVU5
+  59 0028 10BD     		pop	{r4, pc}
+  60              	.L4:
+  61 002a 00BF     		.align	2
+  62              	.L3:
+  63 002c 000C0048 		.word	1207962624
+  64              		.cfi_endproc
+  65              	.LFE297:
+  67              		.section	.text.write_data,"ax",%progbits
+  68              		.align	1
+  69              		.syntax unified
+  70              		.thumb
+  71              		.thumb_func
+  73              	write_data:
+  74              	.LVL4:
+  75              	.LFB298:
+  99:drv/lcd/lcd.c **** 
+ARM GAS  C:\Users\lalbo\AppData\Local\Temp\ccTtuBDr.s 			page 4
+
+
+ 100:drv/lcd/lcd.c **** /**
+ 101:drv/lcd/lcd.c ****  * @brief Write the data to the lcd
+ 102:drv/lcd/lcd.c ****  * @param[in] data - Character/command to write on the lcd.
+ 103:drv/lcd/lcd.c ****  */
+ 104:drv/lcd/lcd.c **** static void write_data(unsigned char data)
+ 105:drv/lcd/lcd.c **** {
+  76              		.loc 1 105 1 is_stmt 1 view -0
+  77              		.cfi_startproc
+  78              		@ args = 0, pretend = 0, frame = 0
+  79              		@ frame_needed = 0, uses_anonymous_args = 0
+  80              		.loc 1 105 1 is_stmt 0 view .LVU7
+  81 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+  82              	.LCFI1:
+  83              		.cfi_def_cfa_offset 24
+  84              		.cfi_offset 3, -24
+  85              		.cfi_offset 4, -20
+  86              		.cfi_offset 5, -16
+  87              		.cfi_offset 6, -12
+  88              		.cfi_offset 7, -8
+  89              		.cfi_offset 14, -4
+  90 0002 0446     		mov	r4, r0
+ 106:drv/lcd/lcd.c ****   unsigned char lsb_nibble = data & 0xF, msb_nibble = (data >> 4) & 0xF;
+  91              		.loc 1 106 3 is_stmt 1 view .LVU8
+  92              	.LVL5:
+  93              		.loc 1 106 42 is_stmt 0 view .LVU9
+  94 0004 0709     		lsrs	r7, r0, #4
+  95              	.LVL6:
+ 107:drv/lcd/lcd.c **** 
+ 108:drv/lcd/lcd.c ****   // MSB data
+ 109:drv/lcd/lcd.c ****   HAL_GPIO_WritePin(D4_PORT, D4_PIN, (GPIO_PinState)(msb_nibble & 0x1));
+  96              		.loc 1 109 3 is_stmt 1 view .LVU10
+  97 0006 1F4D     		ldr	r5, .L7
+  98 0008 C0F30012 		ubfx	r2, r0, #4, #1
+  99 000c 4FF48041 		mov	r1, #16384
+ 100 0010 2846     		mov	r0, r5
+ 101              	.LVL7:
+ 102              		.loc 1 109 3 is_stmt 0 view .LVU11
+ 103 0012 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 104              	.LVL8:
+ 110:drv/lcd/lcd.c ****   HAL_GPIO_WritePin(D5_PORT, D5_PIN, (GPIO_PinState)(msb_nibble & 0x2));
+ 105              		.loc 1 110 3 is_stmt 1 view .LVU12
+ 106 0016 1C4E     		ldr	r6, .L7+4
+ 107 0018 07F00202 		and	r2, r7, #2
+ 108 001c 4FF40061 		mov	r1, #2048
+ 109 0020 3046     		mov	r0, r6
+ 110 0022 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 111              	.LVL9:
+ 111:drv/lcd/lcd.c ****   HAL_GPIO_WritePin(D6_PORT, D6_PIN, (GPIO_PinState)(msb_nibble & 0x4));
+ 112              		.loc 1 111 3 view .LVU13
+ 113 0026 07F00402 		and	r2, r7, #4
+ 114 002a 4FF40071 		mov	r1, #512
+ 115 002e 3046     		mov	r0, r6
+ 116 0030 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 117              	.LVL10:
+ 112:drv/lcd/lcd.c ****   HAL_GPIO_WritePin(D7_PORT, D7_PIN, (GPIO_PinState)(msb_nibble & 0x8));
+ 118              		.loc 1 112 3 view .LVU14
+ 119 0034 07F00802 		and	r2, r7, #8
+ARM GAS  C:\Users\lalbo\AppData\Local\Temp\ccTtuBDr.s 			page 5
+
+
+ 120 0038 4FF40051 		mov	r1, #8192
+ 121 003c 2846     		mov	r0, r5
+ 122 003e FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 123              	.LVL11:
+ 113:drv/lcd/lcd.c **** 
+ 114:drv/lcd/lcd.c ****   enable_pulse();
+ 124              		.loc 1 114 3 view .LVU15
+ 125 0042 FFF7FEFF 		bl	enable_pulse
+ 126              	.LVL12:
+ 115:drv/lcd/lcd.c ****   
+ 116:drv/lcd/lcd.c ****   // LSB data
+ 117:drv/lcd/lcd.c ****   HAL_GPIO_WritePin(D4_PORT, D4_PIN, (GPIO_PinState)(lsb_nibble & 0x1));
+ 127              		.loc 1 117 3 view .LVU16
+ 128 0046 04F00102 		and	r2, r4, #1
+ 129 004a 4FF48041 		mov	r1, #16384
+ 130 004e 2846     		mov	r0, r5
+ 131 0050 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 132              	.LVL13:
+ 118:drv/lcd/lcd.c ****   HAL_GPIO_WritePin(D5_PORT, D5_PIN, (GPIO_PinState)(lsb_nibble & 0x2));
+ 133              		.loc 1 118 3 view .LVU17
+ 134 0054 04F00202 		and	r2, r4, #2
+ 135 0058 4FF40061 		mov	r1, #2048
+ 136 005c 3046     		mov	r0, r6
+ 137 005e FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 138              	.LVL14:
+ 119:drv/lcd/lcd.c ****   HAL_GPIO_WritePin(D6_PORT, D6_PIN, (GPIO_PinState)(lsb_nibble & 0x4));
+ 139              		.loc 1 119 3 view .LVU18
+ 140 0062 04F00402 		and	r2, r4, #4
+ 141 0066 4FF40071 		mov	r1, #512
+ 142 006a 3046     		mov	r0, r6
+ 143 006c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 144              	.LVL15:
+ 120:drv/lcd/lcd.c ****   HAL_GPIO_WritePin(D7_PORT, D7_PIN, (GPIO_PinState)(lsb_nibble & 0x8));
+ 145              		.loc 1 120 3 view .LVU19
+ 146 0070 04F00802 		and	r2, r4, #8
+ 147 0074 4FF40051 		mov	r1, #8192
+ 148 0078 2846     		mov	r0, r5
+ 149 007a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 150              	.LVL16:
+ 121:drv/lcd/lcd.c **** 
+ 122:drv/lcd/lcd.c ****   enable_pulse();
+ 151              		.loc 1 122 3 view .LVU20
+ 152 007e FFF7FEFF 		bl	enable_pulse
+ 153              	.LVL17:
+ 123:drv/lcd/lcd.c **** }
+ 154              		.loc 1 123 1 is_stmt 0 view .LVU21
+ 155 0082 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 156              	.LVL18:
+ 157              	.L8:
+ 158              		.loc 1 123 1 view .LVU22
+ 159              		.align	2
+ 160              	.L7:
+ 161 0084 00140048 		.word	1207964672
+ 162 0088 00100048 		.word	1207963648
+ 163              		.cfi_endproc
+ 164              	.LFE298:
+ 166              		.section	.text.send_command,"ax",%progbits
+ARM GAS  C:\Users\lalbo\AppData\Local\Temp\ccTtuBDr.s 			page 6
+
+
+ 167              		.align	1
+ 168              		.syntax unified
+ 169              		.thumb
+ 170              		.thumb_func
+ 172              	send_command:
+ 173              	.LVL19:
+ 174              	.LFB300:
+ 124:drv/lcd/lcd.c **** 
+ 125:drv/lcd/lcd.c **** /**
+ 126:drv/lcd/lcd.c ****  * @brief Send the data to the lcd
+ 127:drv/lcd/lcd.c ****  * @param[in] data - Character to write on the lcd.
+ 128:drv/lcd/lcd.c ****  */
+ 129:drv/lcd/lcd.c **** static void send_data(unsigned char data)
+ 130:drv/lcd/lcd.c **** {
+ 131:drv/lcd/lcd.c ****   /*Setting rs pin high */
+ 132:drv/lcd/lcd.c ****   HAL_GPIO_WritePin(RS_PORT, RS_PIN, GPIO_PIN_SET);
+ 133:drv/lcd/lcd.c ****   HAL_Delay(20);
+ 134:drv/lcd/lcd.c **** 
+ 135:drv/lcd/lcd.c ****   write_data(data);
+ 136:drv/lcd/lcd.c **** }
+ 137:drv/lcd/lcd.c **** 
+ 138:drv/lcd/lcd.c **** /**
+ 139:drv/lcd/lcd.c ****  * @brief Send the command to the lcd
+ 140:drv/lcd/lcd.c ****  * @param[in] cmd - Command to write on the lcd.
+ 141:drv/lcd/lcd.c ****  */
+ 142:drv/lcd/lcd.c **** static void send_command(unsigned char cmd)
+ 143:drv/lcd/lcd.c **** {
+ 175              		.loc 1 143 1 is_stmt 1 view -0
+ 176              		.cfi_startproc
+ 177              		@ args = 0, pretend = 0, frame = 0
+ 178              		@ frame_needed = 0, uses_anonymous_args = 0
+ 179              		.loc 1 143 1 is_stmt 0 view .LVU24
+ 180 0000 10B5     		push	{r4, lr}
+ 181              	.LCFI2:
+ 182              		.cfi_def_cfa_offset 8
+ 183              		.cfi_offset 4, -8
+ 184              		.cfi_offset 14, -4
+ 185 0002 0446     		mov	r4, r0
+ 144:drv/lcd/lcd.c ****   /*Setting rs pin low */
+ 145:drv/lcd/lcd.c ****   HAL_GPIO_WritePin(RS_PORT, RS_PIN, GPIO_PIN_RESET);
+ 186              		.loc 1 145 3 is_stmt 1 view .LVU25
+ 187 0004 0022     		movs	r2, #0
+ 188 0006 4FF48051 		mov	r1, #4096
+ 189 000a 0548     		ldr	r0, .L11
+ 190              	.LVL20:
+ 191              		.loc 1 145 3 is_stmt 0 view .LVU26
+ 192 000c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 193              	.LVL21:
+ 146:drv/lcd/lcd.c ****   HAL_Delay(20);
+ 194              		.loc 1 146 3 is_stmt 1 view .LVU27
+ 195 0010 1420     		movs	r0, #20
+ 196 0012 FFF7FEFF 		bl	HAL_Delay
+ 197              	.LVL22:
+ 147:drv/lcd/lcd.c **** 
+ 148:drv/lcd/lcd.c ****   write_data(cmd);
+ 198              		.loc 1 148 3 view .LVU28
+ 199 0016 2046     		mov	r0, r4
+ARM GAS  C:\Users\lalbo\AppData\Local\Temp\ccTtuBDr.s 			page 7
+
+
+ 200 0018 FFF7FEFF 		bl	write_data
+ 201              	.LVL23:
+ 149:drv/lcd/lcd.c **** }
+ 202              		.loc 1 149 1 is_stmt 0 view .LVU29
+ 203 001c 10BD     		pop	{r4, pc}
+ 204              	.L12:
+ 205 001e 00BF     		.align	2
+ 206              	.L11:
+ 207 0020 00140048 		.word	1207964672
+ 208              		.cfi_endproc
+ 209              	.LFE300:
+ 211              		.section	.text.send_data,"ax",%progbits
+ 212              		.align	1
+ 213              		.syntax unified
+ 214              		.thumb
+ 215              		.thumb_func
+ 217              	send_data:
+ 218              	.LVL24:
+ 219              	.LFB299:
+ 130:drv/lcd/lcd.c ****   /*Setting rs pin high */
+ 220              		.loc 1 130 1 is_stmt 1 view -0
+ 221              		.cfi_startproc
+ 222              		@ args = 0, pretend = 0, frame = 0
+ 223              		@ frame_needed = 0, uses_anonymous_args = 0
+ 130:drv/lcd/lcd.c ****   /*Setting rs pin high */
+ 224              		.loc 1 130 1 is_stmt 0 view .LVU31
+ 225 0000 10B5     		push	{r4, lr}
+ 226              	.LCFI3:
+ 227              		.cfi_def_cfa_offset 8
+ 228              		.cfi_offset 4, -8
+ 229              		.cfi_offset 14, -4
+ 230 0002 0446     		mov	r4, r0
+ 132:drv/lcd/lcd.c ****   HAL_Delay(20);
+ 231              		.loc 1 132 3 is_stmt 1 view .LVU32
+ 232 0004 0122     		movs	r2, #1
+ 233 0006 4FF48051 		mov	r1, #4096
+ 234 000a 0548     		ldr	r0, .L15
+ 235              	.LVL25:
+ 132:drv/lcd/lcd.c ****   HAL_Delay(20);
+ 236              		.loc 1 132 3 is_stmt 0 view .LVU33
+ 237 000c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 238              	.LVL26:
+ 133:drv/lcd/lcd.c **** 
+ 239              		.loc 1 133 3 is_stmt 1 view .LVU34
+ 240 0010 1420     		movs	r0, #20
+ 241 0012 FFF7FEFF 		bl	HAL_Delay
+ 242              	.LVL27:
+ 135:drv/lcd/lcd.c **** }
+ 243              		.loc 1 135 3 view .LVU35
+ 244 0016 2046     		mov	r0, r4
+ 245 0018 FFF7FEFF 		bl	write_data
+ 246              	.LVL28:
+ 136:drv/lcd/lcd.c **** 
+ 247              		.loc 1 136 1 is_stmt 0 view .LVU36
+ 248 001c 10BD     		pop	{r4, pc}
+ 249              	.L16:
+ 250 001e 00BF     		.align	2
+ARM GAS  C:\Users\lalbo\AppData\Local\Temp\ccTtuBDr.s 			page 8
+
+
+ 251              	.L15:
+ 252 0020 00140048 		.word	1207964672
+ 253              		.cfi_endproc
+ 254              	.LFE299:
+ 256              		.section	.text.lcd_init,"ax",%progbits
+ 257              		.align	1
+ 258              		.global	lcd_init
+ 259              		.syntax unified
+ 260              		.thumb
+ 261              		.thumb_func
+ 263              	lcd_init:
+ 264              	.LFB295:
+  48:drv/lcd/lcd.c ****     outputinit(GPIOF, GPIO_PIN_14 | GPIO_PIN_13 | GPIO_PIN_12);
+ 265              		.loc 1 48 1 is_stmt 1 view -0
+ 266              		.cfi_startproc
+ 267              		@ args = 0, pretend = 0, frame = 0
+ 268              		@ frame_needed = 0, uses_anonymous_args = 0
+ 269 0000 70B5     		push	{r4, r5, r6, lr}
+ 270              	.LCFI4:
+ 271              		.cfi_def_cfa_offset 16
+ 272              		.cfi_offset 4, -16
+ 273              		.cfi_offset 5, -12
+ 274              		.cfi_offset 6, -8
+ 275              		.cfi_offset 14, -4
+  49:drv/lcd/lcd.c ****     outputinit(GPIOE, GPIO_PIN_11 | GPIO_PIN_9);
+ 276              		.loc 1 49 5 view .LVU38
+ 277 0002 1A4E     		ldr	r6, .L19
+ 278 0004 4FF4E041 		mov	r1, #28672
+ 279 0008 3046     		mov	r0, r6
+ 280 000a FFF7FEFF 		bl	outputinit
+ 281              	.LVL29:
+  50:drv/lcd/lcd.c ****     outputinit(GPIOD, GPIO_PIN_15);
+ 282              		.loc 1 50 5 view .LVU39
+ 283 000e 184D     		ldr	r5, .L19+4
+ 284 0010 4FF42061 		mov	r1, #2560
+ 285 0014 2846     		mov	r0, r5
+ 286 0016 FFF7FEFF 		bl	outputinit
+ 287              	.LVL30:
+  51:drv/lcd/lcd.c **** 
+ 288              		.loc 1 51 5 view .LVU40
+ 289 001a 164C     		ldr	r4, .L19+8
+ 290 001c 4FF40041 		mov	r1, #32768
+ 291 0020 2046     		mov	r0, r4
+ 292 0022 FFF7FEFF 		bl	outputinit
+ 293              	.LVL31:
+  53:drv/lcd/lcd.c ****     clearpin(GPIOE, GPIO_PIN_11 | GPIO_PIN_9);
+ 294              		.loc 1 53 5 view .LVU41
+ 295 0026 4FF4E041 		mov	r1, #28672
+ 296 002a 3046     		mov	r0, r6
+ 297 002c FFF7FEFF 		bl	clearpin
+ 298              	.LVL32:
+  54:drv/lcd/lcd.c ****     clearpin(GPIOD, GPIO_PIN_15);
+ 299              		.loc 1 54 5 view .LVU42
+ 300 0030 4FF42061 		mov	r1, #2560
+ 301 0034 2846     		mov	r0, r5
+ 302 0036 FFF7FEFF 		bl	clearpin
+ 303              	.LVL33:
+ARM GAS  C:\Users\lalbo\AppData\Local\Temp\ccTtuBDr.s 			page 9
+
+
+  55:drv/lcd/lcd.c **** 
+ 304              		.loc 1 55 5 view .LVU43
+ 305 003a 4FF40041 		mov	r1, #32768
+ 306 003e 2046     		mov	r0, r4
+ 307 0040 FFF7FEFF 		bl	clearpin
+ 308              	.LVL34:
+  58:drv/lcd/lcd.c ****     HAL_Delay(50);
+ 309              		.loc 1 58 5 view .LVU44
+ 310 0044 0C20     		movs	r0, #12
+ 311 0046 FFF7FEFF 		bl	send_command
+ 312              	.LVL35:
+  59:drv/lcd/lcd.c ****     send_command(LCD_CMD_4BIT_MODE);
+ 313              		.loc 1 59 5 view .LVU45
+ 314 004a 3220     		movs	r0, #50
+ 315 004c FFF7FEFF 		bl	HAL_Delay
+ 316              	.LVL36:
+  60:drv/lcd/lcd.c ****     HAL_Delay(50);
+ 317              		.loc 1 60 5 view .LVU46
+ 318 0050 2820     		movs	r0, #40
+ 319 0052 FFF7FEFF 		bl	send_command
+ 320              	.LVL37:
+  61:drv/lcd/lcd.c ****     send_command(LCD_CMD_CLEAR);
+ 321              		.loc 1 61 5 view .LVU47
+ 322 0056 3220     		movs	r0, #50
+ 323 0058 FFF7FEFF 		bl	HAL_Delay
+ 324              	.LVL38:
+  62:drv/lcd/lcd.c ****     HAL_Delay(50);
+ 325              		.loc 1 62 5 view .LVU48
+ 326 005c 0120     		movs	r0, #1
+ 327 005e FFF7FEFF 		bl	send_command
+ 328              	.LVL39:
+  63:drv/lcd/lcd.c **** }
+ 329              		.loc 1 63 5 view .LVU49
+ 330 0062 3220     		movs	r0, #50
+ 331 0064 FFF7FEFF 		bl	HAL_Delay
+ 332              	.LVL40:
+  64:drv/lcd/lcd.c **** 
+ 333              		.loc 1 64 1 is_stmt 0 view .LVU50
+ 334 0068 70BD     		pop	{r4, r5, r6, pc}
+ 335              	.L20:
+ 336 006a 00BF     		.align	2
+ 337              	.L19:
+ 338 006c 00140048 		.word	1207964672
+ 339 0070 00100048 		.word	1207963648
+ 340 0074 000C0048 		.word	1207962624
+ 341              		.cfi_endproc
+ 342              	.LFE295:
+ 344              		.section	.text.lcd_display,"ax",%progbits
+ 345              		.align	1
+ 346              		.global	lcd_display
+ 347              		.syntax unified
+ 348              		.thumb
+ 349              		.thumb_func
+ 351              	lcd_display:
+ 352              	.LVL41:
+ 353              	.LFB296:
+  72:drv/lcd/lcd.c ****   if(line_selection == 1)
+ARM GAS  C:\Users\lalbo\AppData\Local\Temp\ccTtuBDr.s 			page 10
+
+
+ 354              		.loc 1 72 1 is_stmt 1 view -0
+ 355              		.cfi_startproc
+ 356              		@ args = 0, pretend = 0, frame = 0
+ 357              		@ frame_needed = 0, uses_anonymous_args = 0
+  72:drv/lcd/lcd.c ****   if(line_selection == 1)
+ 358              		.loc 1 72 1 is_stmt 0 view .LVU52
+ 359 0000 10B5     		push	{r4, lr}
+ 360              	.LCFI5:
+ 361              		.cfi_def_cfa_offset 8
+ 362              		.cfi_offset 4, -8
+ 363              		.cfi_offset 14, -4
+ 364 0002 0446     		mov	r4, r0
+  73:drv/lcd/lcd.c ****   {
+ 365              		.loc 1 73 3 is_stmt 1 view .LVU53
+  73:drv/lcd/lcd.c ****   {
+ 366              		.loc 1 73 5 is_stmt 0 view .LVU54
+ 367 0004 0129     		cmp	r1, #1
+ 368 0006 05D0     		beq	.L27
+  77:drv/lcd/lcd.c ****   {
+ 369              		.loc 1 77 8 is_stmt 1 view .LVU55
+  77:drv/lcd/lcd.c ****   {
+ 370              		.loc 1 77 10 is_stmt 0 view .LVU56
+ 371 0008 0229     		cmp	r1, #2
+ 372 000a 0AD1     		bne	.L23
+  79:drv/lcd/lcd.c ****   }
+ 373              		.loc 1 79 5 is_stmt 1 view .LVU57
+ 374 000c C020     		movs	r0, #192
+ 375              	.LVL42:
+  79:drv/lcd/lcd.c ****   }
+ 376              		.loc 1 79 5 is_stmt 0 view .LVU58
+ 377 000e FFF7FEFF 		bl	send_command
+ 378              	.LVL43:
+  79:drv/lcd/lcd.c ****   }
+ 379              		.loc 1 79 5 view .LVU59
+ 380 0012 06E0     		b	.L23
+ 381              	.LVL44:
+ 382              	.L27:
+  75:drv/lcd/lcd.c ****   }
+ 383              		.loc 1 75 5 is_stmt 1 view .LVU60
+ 384 0014 8020     		movs	r0, #128
+ 385              	.LVL45:
+  75:drv/lcd/lcd.c ****   }
+ 386              		.loc 1 75 5 is_stmt 0 view .LVU61
+ 387 0016 FFF7FEFF 		bl	send_command
+ 388              	.LVL46:
+  75:drv/lcd/lcd.c ****   }
+ 389              		.loc 1 75 5 view .LVU62
+ 390 001a 02E0     		b	.L23
+ 391              	.L25:
+  84:drv/lcd/lcd.c ****     data_name++;
+ 392              		.loc 1 84 5 is_stmt 1 view .LVU63
+ 393 001c FFF7FEFF 		bl	send_data
+ 394              	.LVL47:
+  85:drv/lcd/lcd.c ****   }
+ 395              		.loc 1 85 5 view .LVU64
+  85:drv/lcd/lcd.c ****   }
+ 396              		.loc 1 85 14 is_stmt 0 view .LVU65
+ARM GAS  C:\Users\lalbo\AppData\Local\Temp\ccTtuBDr.s 			page 11
+
+
+ 397 0020 0134     		adds	r4, r4, #1
+ 398              	.LVL48:
+ 399              	.L23:
+  82:drv/lcd/lcd.c ****   {
+ 400              		.loc 1 82 8 is_stmt 1 view .LVU66
+  82:drv/lcd/lcd.c ****   {
+ 401              		.loc 1 82 9 is_stmt 0 view .LVU67
+ 402 0022 2078     		ldrb	r0, [r4]	@ zero_extendqisi2
+  82:drv/lcd/lcd.c ****   {
+ 403              		.loc 1 82 8 view .LVU68
+ 404 0024 0028     		cmp	r0, #0
+ 405 0026 F9D1     		bne	.L25
+  87:drv/lcd/lcd.c **** 
+ 406              		.loc 1 87 1 view .LVU69
+ 407 0028 10BD     		pop	{r4, pc}
+  87:drv/lcd/lcd.c **** 
+ 408              		.loc 1 87 1 view .LVU70
+ 409              		.cfi_endproc
+ 410              	.LFE296:
+ 412              		.text
+ 413              	.Letext0:
+ 414              		.file 2 "c:\\program files (x86)\\gnu arm embedded toolchain\\10 2021.10\\arm-none-eabi\\include\\
+ 415              		.file 3 "c:\\program files (x86)\\gnu arm embedded toolchain\\10 2021.10\\arm-none-eabi\\include\\
+ 416              		.file 4 "Drivers/CMSIS/Device/ST/STM32L4xx/Include/stm32l4r5xx.h"
+ 417              		.file 5 "Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_gpio.h"
+ 418              		.file 6 "Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal.h"
+ 419              		.file 7 "drv/output/output.h"
+ARM GAS  C:\Users\lalbo\AppData\Local\Temp\ccTtuBDr.s 			page 12
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 lcd.c
+C:\Users\lalbo\AppData\Local\Temp\ccTtuBDr.s:20     .text.enable_pulse:00000000 $t
+C:\Users\lalbo\AppData\Local\Temp\ccTtuBDr.s:25     .text.enable_pulse:00000000 enable_pulse
+C:\Users\lalbo\AppData\Local\Temp\ccTtuBDr.s:63     .text.enable_pulse:0000002c $d
+C:\Users\lalbo\AppData\Local\Temp\ccTtuBDr.s:68     .text.write_data:00000000 $t
+C:\Users\lalbo\AppData\Local\Temp\ccTtuBDr.s:73     .text.write_data:00000000 write_data
+C:\Users\lalbo\AppData\Local\Temp\ccTtuBDr.s:161    .text.write_data:00000084 $d
+C:\Users\lalbo\AppData\Local\Temp\ccTtuBDr.s:167    .text.send_command:00000000 $t
+C:\Users\lalbo\AppData\Local\Temp\ccTtuBDr.s:172    .text.send_command:00000000 send_command
+C:\Users\lalbo\AppData\Local\Temp\ccTtuBDr.s:207    .text.send_command:00000020 $d
+C:\Users\lalbo\AppData\Local\Temp\ccTtuBDr.s:212    .text.send_data:00000000 $t
+C:\Users\lalbo\AppData\Local\Temp\ccTtuBDr.s:217    .text.send_data:00000000 send_data
+C:\Users\lalbo\AppData\Local\Temp\ccTtuBDr.s:252    .text.send_data:00000020 $d
+C:\Users\lalbo\AppData\Local\Temp\ccTtuBDr.s:257    .text.lcd_init:00000000 $t
+C:\Users\lalbo\AppData\Local\Temp\ccTtuBDr.s:263    .text.lcd_init:00000000 lcd_init
+C:\Users\lalbo\AppData\Local\Temp\ccTtuBDr.s:338    .text.lcd_init:0000006c $d
+C:\Users\lalbo\AppData\Local\Temp\ccTtuBDr.s:345    .text.lcd_display:00000000 $t
+C:\Users\lalbo\AppData\Local\Temp\ccTtuBDr.s:351    .text.lcd_display:00000000 lcd_display
+
+UNDEFINED SYMBOLS
+HAL_GPIO_WritePin
+HAL_Delay
+outputinit
+clearpin

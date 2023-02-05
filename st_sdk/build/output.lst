@@ -1,0 +1,365 @@
+ARM GAS  C:\Users\lalbo\AppData\Local\Temp\ccYM4mAg.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"output.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.outputinit,"ax",%progbits
+  20              		.align	1
+  21              		.global	outputinit
+  22              		.syntax unified
+  23              		.thumb
+  24              		.thumb_func
+  26              	outputinit:
+  27              	.LVL0:
+  28              	.LFB292:
+  29              		.file 1 "drv/output/output.c"
+   1:drv/output/output.c **** #include "output.h"
+   2:drv/output/output.c **** 
+   3:drv/output/output.c **** // PB7 initialized as output
+   4:drv/output/output.c **** void outputinit(GPIO_TypeDef* GPIOx, uint16_t GPIO_PIN)
+   5:drv/output/output.c **** {
+  30              		.loc 1 5 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 40
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		.loc 1 5 1 is_stmt 0 view .LVU1
+  35 0000 00B5     		push	{lr}
+  36              	.LCFI0:
+  37              		.cfi_def_cfa_offset 4
+  38              		.cfi_offset 14, -4
+  39 0002 8BB0     		sub	sp, sp, #44
+  40              	.LCFI1:
+  41              		.cfi_def_cfa_offset 48
+   6:drv/output/output.c ****     if (GPIOx == GPIOB)
+  42              		.loc 1 6 5 is_stmt 1 view .LVU2
+  43              		.loc 1 6 8 is_stmt 0 view .LVU3
+  44 0004 304B     		ldr	r3, .L12
+  45 0006 9842     		cmp	r0, r3
+  46 0008 19D0     		beq	.L8
+   7:drv/output/output.c ****     {
+   8:drv/output/output.c ****         __HAL_RCC_GPIOB_CLK_ENABLE();
+   9:drv/output/output.c ****     }
+  10:drv/output/output.c ****     else if(GPIOx == GPIOC)
+  47              		.loc 1 10 10 is_stmt 1 view .LVU4
+  48              		.loc 1 10 12 is_stmt 0 view .LVU5
+ARM GAS  C:\Users\lalbo\AppData\Local\Temp\ccYM4mAg.s 			page 2
+
+
+  49 000a 304B     		ldr	r3, .L12+4
+  50 000c 9842     		cmp	r0, r3
+  51 000e 30D0     		beq	.L9
+  11:drv/output/output.c ****     {
+  12:drv/output/output.c ****         __HAL_RCC_GPIOC_CLK_ENABLE();
+  13:drv/output/output.c ****     }
+  14:drv/output/output.c ****     else if (GPIOx == GPIOF)
+  52              		.loc 1 14 10 is_stmt 1 view .LVU6
+  53              		.loc 1 14 13 is_stmt 0 view .LVU7
+  54 0010 2F4B     		ldr	r3, .L12+8
+  55 0012 9842     		cmp	r0, r3
+  56 0014 3BD0     		beq	.L10
+  15:drv/output/output.c ****     {
+  16:drv/output/output.c ****         __HAL_RCC_GPIOF_CLK_ENABLE();
+  17:drv/output/output.c ****     }
+  18:drv/output/output.c ****     else if(GPIOx == GPIOE)
+  57              		.loc 1 18 10 is_stmt 1 view .LVU8
+  58              		.loc 1 18 12 is_stmt 0 view .LVU9
+  59 0016 2F4B     		ldr	r3, .L12+12
+  60 0018 9842     		cmp	r0, r3
+  61 001a 46D0     		beq	.L11
+  19:drv/output/output.c ****     {
+  20:drv/output/output.c ****         __HAL_RCC_GPIOE_CLK_ENABLE();
+  21:drv/output/output.c ****     }
+  22:drv/output/output.c ****     else if(GPIOx == GPIOD)
+  62              		.loc 1 22 10 is_stmt 1 view .LVU10
+  63              		.loc 1 22 12 is_stmt 0 view .LVU11
+  64 001c 2E4B     		ldr	r3, .L12+16
+  65 001e 9842     		cmp	r0, r3
+  66 0020 1AD1     		bne	.L3
+  23:drv/output/output.c ****     {
+  24:drv/output/output.c ****         __HAL_RCC_GPIOD_CLK_ENABLE();
+  67              		.loc 1 24 9 is_stmt 1 view .LVU12
+  68              	.LBB2:
+  69              		.loc 1 24 9 view .LVU13
+  70              		.loc 1 24 9 view .LVU14
+  71 0022 03F17843 		add	r3, r3, #-134217728
+  72 0026 03F50133 		add	r3, r3, #132096
+  73 002a DA6C     		ldr	r2, [r3, #76]
+  74 002c 42F00802 		orr	r2, r2, #8
+  75 0030 DA64     		str	r2, [r3, #76]
+  76              		.loc 1 24 9 view .LVU15
+  77 0032 DB6C     		ldr	r3, [r3, #76]
+  78 0034 03F00803 		and	r3, r3, #8
+  79 0038 0493     		str	r3, [sp, #16]
+  80              		.loc 1 24 9 view .LVU16
+  81 003a 049B     		ldr	r3, [sp, #16]
+  82 003c 0CE0     		b	.L3
+  83              	.L8:
+  84              	.LBE2:
+   8:drv/output/output.c ****     }
+  85              		.loc 1 8 9 view .LVU17
+  86              	.LBB3:
+   8:drv/output/output.c ****     }
+  87              		.loc 1 8 9 view .LVU18
+   8:drv/output/output.c ****     }
+  88              		.loc 1 8 9 view .LVU19
+ARM GAS  C:\Users\lalbo\AppData\Local\Temp\ccYM4mAg.s 			page 3
+
+
+  89 003e 03F17843 		add	r3, r3, #-134217728
+  90 0042 03F50333 		add	r3, r3, #134144
+  91 0046 DA6C     		ldr	r2, [r3, #76]
+  92 0048 42F00202 		orr	r2, r2, #2
+  93 004c DA64     		str	r2, [r3, #76]
+   8:drv/output/output.c ****     }
+  94              		.loc 1 8 9 view .LVU20
+  95 004e DB6C     		ldr	r3, [r3, #76]
+  96 0050 03F00203 		and	r3, r3, #2
+  97 0054 0093     		str	r3, [sp]
+   8:drv/output/output.c ****     }
+  98              		.loc 1 8 9 view .LVU21
+  99 0056 009B     		ldr	r3, [sp]
+ 100              	.LBE3:
+   8:drv/output/output.c ****     }
+ 101              		.loc 1 8 9 view .LVU22
+ 102              	.L3:
+ 103              		.loc 1 24 9 discriminator 1 view .LVU23
+  25:drv/output/output.c ****     }
+  26:drv/output/output.c ****     GPIO_InitTypeDef GPIO_Init;
+ 104              		.loc 1 26 5 discriminator 1 view .LVU24
+  27:drv/output/output.c **** 
+  28:drv/output/output.c ****     GPIO_Init.Pin = GPIO_PIN;
+ 105              		.loc 1 28 5 discriminator 1 view .LVU25
+ 106              		.loc 1 28 19 is_stmt 0 discriminator 1 view .LVU26
+ 107 0058 0591     		str	r1, [sp, #20]
+  29:drv/output/output.c ****     GPIO_Init.Mode = GPIO_MODE_OUTPUT_PP;
+ 108              		.loc 1 29 5 is_stmt 1 discriminator 1 view .LVU27
+ 109              		.loc 1 29 20 is_stmt 0 discriminator 1 view .LVU28
+ 110 005a 0123     		movs	r3, #1
+ 111 005c 0693     		str	r3, [sp, #24]
+  30:drv/output/output.c ****     GPIO_Init.Pull = GPIO_NOPULL;
+ 112              		.loc 1 30 5 is_stmt 1 discriminator 1 view .LVU29
+ 113              		.loc 1 30 20 is_stmt 0 discriminator 1 view .LVU30
+ 114 005e 0023     		movs	r3, #0
+ 115 0060 0793     		str	r3, [sp, #28]
+  31:drv/output/output.c ****     GPIO_Init.Speed = GPIO_SPEED_FREQ_LOW;
+ 116              		.loc 1 31 5 is_stmt 1 discriminator 1 view .LVU31
+ 117              		.loc 1 31 21 is_stmt 0 discriminator 1 view .LVU32
+ 118 0062 0893     		str	r3, [sp, #32]
+  32:drv/output/output.c ****     GPIO_Init.Alternate = 0;
+ 119              		.loc 1 32 5 is_stmt 1 discriminator 1 view .LVU33
+ 120              		.loc 1 32 25 is_stmt 0 discriminator 1 view .LVU34
+ 121 0064 0993     		str	r3, [sp, #36]
+  33:drv/output/output.c ****     HAL_GPIO_Init(GPIOx, &GPIO_Init);
+ 122              		.loc 1 33 5 is_stmt 1 discriminator 1 view .LVU35
+ 123 0066 05A9     		add	r1, sp, #20
+ 124              	.LVL1:
+ 125              		.loc 1 33 5 is_stmt 0 discriminator 1 view .LVU36
+ 126 0068 FFF7FEFF 		bl	HAL_GPIO_Init
+ 127              	.LVL2:
+  34:drv/output/output.c **** }
+ 128              		.loc 1 34 1 discriminator 1 view .LVU37
+ 129 006c 0BB0     		add	sp, sp, #44
+ 130              	.LCFI2:
+ 131              		.cfi_remember_state
+ 132              		.cfi_def_cfa_offset 4
+ARM GAS  C:\Users\lalbo\AppData\Local\Temp\ccYM4mAg.s 			page 4
+
+
+ 133              		@ sp needed
+ 134 006e 5DF804FB 		ldr	pc, [sp], #4
+ 135              	.LVL3:
+ 136              	.L9:
+ 137              	.LCFI3:
+ 138              		.cfi_restore_state
+  12:drv/output/output.c ****     }
+ 139              		.loc 1 12 9 is_stmt 1 view .LVU38
+ 140              	.LBB4:
+  12:drv/output/output.c ****     }
+ 141              		.loc 1 12 9 view .LVU39
+  12:drv/output/output.c ****     }
+ 142              		.loc 1 12 9 view .LVU40
+ 143 0072 03F17843 		add	r3, r3, #-134217728
+ 144 0076 03F50233 		add	r3, r3, #133120
+ 145 007a DA6C     		ldr	r2, [r3, #76]
+ 146 007c 42F00402 		orr	r2, r2, #4
+ 147 0080 DA64     		str	r2, [r3, #76]
+  12:drv/output/output.c ****     }
+ 148              		.loc 1 12 9 view .LVU41
+ 149 0082 DB6C     		ldr	r3, [r3, #76]
+ 150 0084 03F00403 		and	r3, r3, #4
+ 151 0088 0193     		str	r3, [sp, #4]
+  12:drv/output/output.c ****     }
+ 152              		.loc 1 12 9 view .LVU42
+ 153 008a 019B     		ldr	r3, [sp, #4]
+ 154              	.LBE4:
+  12:drv/output/output.c ****     }
+ 155              		.loc 1 12 9 view .LVU43
+ 156 008c E4E7     		b	.L3
+ 157              	.L10:
+  16:drv/output/output.c ****     }
+ 158              		.loc 1 16 9 view .LVU44
+ 159              	.LBB5:
+  16:drv/output/output.c ****     }
+ 160              		.loc 1 16 9 view .LVU45
+  16:drv/output/output.c ****     }
+ 161              		.loc 1 16 9 view .LVU46
+ 162 008e 03F17843 		add	r3, r3, #-134217728
+ 163 0092 03F5FE33 		add	r3, r3, #130048
+ 164 0096 DA6C     		ldr	r2, [r3, #76]
+ 165 0098 42F02002 		orr	r2, r2, #32
+ 166 009c DA64     		str	r2, [r3, #76]
+  16:drv/output/output.c ****     }
+ 167              		.loc 1 16 9 view .LVU47
+ 168 009e DB6C     		ldr	r3, [r3, #76]
+ 169 00a0 03F02003 		and	r3, r3, #32
+ 170 00a4 0293     		str	r3, [sp, #8]
+  16:drv/output/output.c ****     }
+ 171              		.loc 1 16 9 view .LVU48
+ 172 00a6 029B     		ldr	r3, [sp, #8]
+ 173              	.LBE5:
+  16:drv/output/output.c ****     }
+ 174              		.loc 1 16 9 view .LVU49
+ 175 00a8 D6E7     		b	.L3
+ 176              	.L11:
+  20:drv/output/output.c ****     }
+ARM GAS  C:\Users\lalbo\AppData\Local\Temp\ccYM4mAg.s 			page 5
+
+
+ 177              		.loc 1 20 9 view .LVU50
+ 178              	.LBB6:
+  20:drv/output/output.c ****     }
+ 179              		.loc 1 20 9 view .LVU51
+  20:drv/output/output.c ****     }
+ 180              		.loc 1 20 9 view .LVU52
+ 181 00aa 03F17843 		add	r3, r3, #-134217728
+ 182 00ae 03F50033 		add	r3, r3, #131072
+ 183 00b2 DA6C     		ldr	r2, [r3, #76]
+ 184 00b4 42F01002 		orr	r2, r2, #16
+ 185 00b8 DA64     		str	r2, [r3, #76]
+  20:drv/output/output.c ****     }
+ 186              		.loc 1 20 9 view .LVU53
+ 187 00ba DB6C     		ldr	r3, [r3, #76]
+ 188 00bc 03F01003 		and	r3, r3, #16
+ 189 00c0 0393     		str	r3, [sp, #12]
+  20:drv/output/output.c ****     }
+ 190              		.loc 1 20 9 view .LVU54
+ 191 00c2 039B     		ldr	r3, [sp, #12]
+ 192              	.LBE6:
+  20:drv/output/output.c ****     }
+ 193              		.loc 1 20 9 view .LVU55
+ 194 00c4 C8E7     		b	.L3
+ 195              	.L13:
+ 196 00c6 00BF     		.align	2
+ 197              	.L12:
+ 198 00c8 00040048 		.word	1207960576
+ 199 00cc 00080048 		.word	1207961600
+ 200 00d0 00140048 		.word	1207964672
+ 201 00d4 00100048 		.word	1207963648
+ 202 00d8 000C0048 		.word	1207962624
+ 203              		.cfi_endproc
+ 204              	.LFE292:
+ 206              		.section	.text.setpin,"ax",%progbits
+ 207              		.align	1
+ 208              		.global	setpin
+ 209              		.syntax unified
+ 210              		.thumb
+ 211              		.thumb_func
+ 213              	setpin:
+ 214              	.LVL4:
+ 215              	.LFB293:
+  35:drv/output/output.c **** 
+  36:drv/output/output.c **** void setpin(GPIO_TypeDef* GPIOx, uint16_t GPIO_PIN)
+  37:drv/output/output.c **** {
+ 216              		.loc 1 37 1 view -0
+ 217              		.cfi_startproc
+ 218              		@ args = 0, pretend = 0, frame = 0
+ 219              		@ frame_needed = 0, uses_anonymous_args = 0
+ 220              		.loc 1 37 1 is_stmt 0 view .LVU57
+ 221 0000 08B5     		push	{r3, lr}
+ 222              	.LCFI4:
+ 223              		.cfi_def_cfa_offset 8
+ 224              		.cfi_offset 3, -8
+ 225              		.cfi_offset 14, -4
+  38:drv/output/output.c ****     HAL_GPIO_WritePin(GPIOx, GPIO_PIN, GPIO_PIN_SET);
+ 226              		.loc 1 38 5 is_stmt 1 view .LVU58
+ARM GAS  C:\Users\lalbo\AppData\Local\Temp\ccYM4mAg.s 			page 6
+
+
+ 227 0002 0122     		movs	r2, #1
+ 228 0004 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 229              	.LVL5:
+  39:drv/output/output.c **** }
+ 230              		.loc 1 39 1 is_stmt 0 view .LVU59
+ 231 0008 08BD     		pop	{r3, pc}
+ 232              		.cfi_endproc
+ 233              	.LFE293:
+ 235              		.section	.text.clearpin,"ax",%progbits
+ 236              		.align	1
+ 237              		.global	clearpin
+ 238              		.syntax unified
+ 239              		.thumb
+ 240              		.thumb_func
+ 242              	clearpin:
+ 243              	.LVL6:
+ 244              	.LFB294:
+  40:drv/output/output.c **** 
+  41:drv/output/output.c **** void clearpin(GPIO_TypeDef* GPIOx, uint16_t GPIO_PIN)
+  42:drv/output/output.c **** {
+ 245              		.loc 1 42 1 is_stmt 1 view -0
+ 246              		.cfi_startproc
+ 247              		@ args = 0, pretend = 0, frame = 0
+ 248              		@ frame_needed = 0, uses_anonymous_args = 0
+ 249              		.loc 1 42 1 is_stmt 0 view .LVU61
+ 250 0000 08B5     		push	{r3, lr}
+ 251              	.LCFI5:
+ 252              		.cfi_def_cfa_offset 8
+ 253              		.cfi_offset 3, -8
+ 254              		.cfi_offset 14, -4
+  43:drv/output/output.c ****    HAL_GPIO_WritePin(GPIOx, GPIO_PIN, GPIO_PIN_RESET);
+ 255              		.loc 1 43 4 is_stmt 1 view .LVU62
+ 256 0002 0022     		movs	r2, #0
+ 257 0004 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 258              	.LVL7:
+  44:drv/output/output.c **** }...
+ 259              		.loc 1 44 1 is_stmt 0 view .LVU63
+ 260 0008 08BD     		pop	{r3, pc}
+ 261              		.cfi_endproc
+ 262              	.LFE294:
+ 264              		.text
+ 265              	.Letext0:
+ 266              		.file 2 "c:\\program files (x86)\\gnu arm embedded toolchain\\10 2021.10\\arm-none-eabi\\include\\
+ 267              		.file 3 "c:\\program files (x86)\\gnu arm embedded toolchain\\10 2021.10\\arm-none-eabi\\include\\
+ 268              		.file 4 "Drivers/CMSIS/Device/ST/STM32L4xx/Include/stm32l4r5xx.h"
+ 269              		.file 5 "Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_gpio.h"
+ARM GAS  C:\Users\lalbo\AppData\Local\Temp\ccYM4mAg.s 			page 7
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 output.c
+C:\Users\lalbo\AppData\Local\Temp\ccYM4mAg.s:20     .text.outputinit:00000000 $t
+C:\Users\lalbo\AppData\Local\Temp\ccYM4mAg.s:26     .text.outputinit:00000000 outputinit
+C:\Users\lalbo\AppData\Local\Temp\ccYM4mAg.s:198    .text.outputinit:000000c8 $d
+C:\Users\lalbo\AppData\Local\Temp\ccYM4mAg.s:207    .text.setpin:00000000 $t
+C:\Users\lalbo\AppData\Local\Temp\ccYM4mAg.s:213    .text.setpin:00000000 setpin
+C:\Users\lalbo\AppData\Local\Temp\ccYM4mAg.s:236    .text.clearpin:00000000 $t
+C:\Users\lalbo\AppData\Local\Temp\ccYM4mAg.s:242    .text.clearpin:00000000 clearpin
+
+UNDEFINED SYMBOLS
+HAL_GPIO_Init
+HAL_GPIO_WritePin
