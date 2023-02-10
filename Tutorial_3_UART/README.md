@@ -56,7 +56,7 @@ Start(0) + Data Frame(1 1 1 0 1 0 1) + Parity(0) + Stop(0)
   ![](images/Uart_init.png)
 
 - Following functios are used for UART transmission.
-```
+```C
 // Initializes UART (PC12 as Tx and PD2 as RX)
 MX_UART4_Init()
 
@@ -72,12 +72,33 @@ HAL_StatusTypeDef HAL_UART_Receive(UART_HandleTypeDef *huart,
                                    uint32_t Timeout)
 
 ```
+- Sample code to transmit the received data to putty 
+```C
+  MX_UART5_Init();
 
+  unsigned char buffer;
+  HAL_StatusTypeDef status;
+  
+  while (1)
+  {
+    status =  HAL_UART_Receive(&huart5, &buffer, 1, 100);
+    // Check that we have received data
+    if(status == HAL_OK)
+    {
+        HAL_UART_Transmit(&huart5, &buffer, sizeof(buffer), 100);
+    }
+  }
+```
 ## 3.Test the `UART` transmission using `Putty`.
 - Connect the STM32 PC12 to FTDI Rx (yellow) and  STM32 PD2 to FTDI Tx(Orange).
 - Connect the FTDI USB to PC and open the Putty
+ ![](images/connection.png)
 - In putty, select `Serial`, set baud rate and serial line then clock OK.
+- Check `COM` port (Device Manager --> Ports (COM & LPT))
+  ![](images/putty_setting.png)
 - Power on STM32
 - We can see the transmitted data from STM32 on Putty.
- ![](images/FTTP.png)
+  ![](images/putty.png)
+
+
  
