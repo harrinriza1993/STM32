@@ -1,16 +1,3 @@
-
-None selected 
-
-Skip to content
-Using Gmail with screen readers
-in:sent 
-Conversations
-0.01 GB of 15 GB used
-Terms · Privacy · Program Policies
-Last account activity: 0 minutes ago
-Currently being used in 1 other location · Details
-# CALCULATION OF EXECUTION TIME IN TIMER
-
 ## Introduction  
 1. General description about `Timer`.  
 2. Generate a code for Timer using `STM32CubeMX` to generate a delay.  
@@ -28,9 +15,12 @@ In this tutoral, we configure the STM32 timer module to operate in timer mode an
 - Timer gets the clock frequency either from CPU (STM32L4: 40 MHZ) or any other  high or low frequency.
 
 ### Prescaler:
-It divides the clock frequency according to the values assigned to it. For example the clock frequency is 4MHZ and prescaler is 4 , before feeding 4MHZ clock frequency to the counter the presclaer divides 4MHZ by 4. So 1MHZ is fed to the counter.
+It divides the clock frequency according to the values assigned to it.   
+For example if the clock frequency is 4MHZ and prescaler is 4, then the counter is incremented by one for every 4 clock pulses of input clock.
+![](images/timerblockdiagram.png)
+
 ### Counter:
- Counter counts the clock frequency pulses. For example if 4MHZ frequency clock pulses is given to a counter, it counts 4MHZ  pulses in 1 second. The maximum value a counter counts depends upon the timer we use . For example if we use a 16 bit timer then (2 ^ 16 -1), that is 65,535 is the maximum count a counter can count. If the count exceeds more than this value then it roll over back to 0.
+ Counter counts the clock frequency pulses. For example if 4MHZ frequency clock pulses is given to a counter, it counts 4MHZ  pulses in 1 second. The maximum value a counter counts depends upon the timer we use. For example if we use a 16 bit timer then (2 ^ 16 -1), that is 65,535 is the maximum count a counter can count. If the count exceeds more than this value then it roll over back to 0.
 
 ### Block diagram of Timer:
 
@@ -39,7 +29,7 @@ It divides the clock frequency according to the values assigned to it. For examp
 In this example 4MHz clock frequency is given to a prescaler of 4, then 1MHZ clock pulse is fed to the counter. The time in seconds is calculated as `T = 1 / f`.
 
 ```
-Time in seconds = 1 /1* 10^6 seconds = 10 microseconds.
+Time for one clock pulze = 1 /1* 10^6 seconds = 10 microseconds.
 ```
 
 So the time taken to count 1 clock pulse is 10 microseconds. So the maximum time taken to calculate the whole clock pulse is ` 65,536 * 10 ^ -6` seconds.
@@ -66,9 +56,9 @@ Then enable the  NVIC Settings.
 Now we have to set the parameter settings. Since the maximum clock frequency is 4MHZ. we set prescaler used is 4000, 
 
 ```
-Time in seconds =  4MHz/4000 = 10 000 Hz.
+Number of clock pulses in one seconds =  4MHz/4000 = 10 000 Hz.
 ```
-Now, counter value is incremented by for every 4000 clock pulse, so there is one second delay is generated when the counter value is 10000.
+Now, counter value is incremented by one for every 4000 clock pulse, so there is one second delay is generated when the counter value is 10000.
 
 ![](images/Parameter_setting.png)
 
@@ -106,10 +96,9 @@ __HAL_TIM_SET_COUNTER(&htim16, 0);
 timer_val = __HAL_TIM_GET_COUNTER(&htim16);
 ```
      
-## 3. Test the timer by toggling led/UART.
+## 3. Test the timer by toggling led.
 
-Modify the `main.c` as bellow,
-
+Modify the `main.c` as below,
 
 ```c
 
@@ -128,7 +117,7 @@ HAL_TIM_Base_Start(&htim16);
 
     timer_val = __HAL_TIM_GET_COUNTER(&htim16);
 
-    // When the counter value is reached more 60000, there is a second delay is generated.
+    // When the counter value is reached more 10000, there is a one second delay is generated.
     if(timer_val >= 10000)
     {
         HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_7);
@@ -137,12 +126,46 @@ HAL_TIM_Base_Start(&htim16);
 }
 ```
 
+## 3. Test the timer by sending the data through the UART.
 
+Test the timer counter value is 10000 after one seconds.
 
+Modify the `main.c` as below,
 
+```c
 
+// Timer initialization
+MX_TIM16_Init()
 
-    
+// Start the timer
+HAL_TIM_Base_Start(&htim16);
 
-README.md
-Displaying README.md.
+// Rest the counter
+ __HAL_TIM_SET_COUNTER(&htim16, 0);
+
+ unit32_t before = 0, after = 0, delay;
+ char str[50];
+ 
+ while(1) {
+
+   __HAL_TIM_SET_COUNTER(&htim16, 0);
+
+    // read the current counter value
+    before = __HAL_TIM_GET_COUNTER(&htim16);
+
+    // Wait for one second
+    HAL_Delay(1000);
+
+    // Read the current counter value after one second
+    after =  __HAL_TIM_GET_COUNTER(&htim16 );
+
+    delay = after - before;
+
+    sprintf(str, "Number of counts after 1 second: %d \n", delay);
+    // Send the counter diff value after a second through UART
+    HAL_UART_Transmit(&huart4, &str, strlen(str), 100);
+ }
+ ```
+
+ The number of counts should be aprrox 10 000.
+ ![](images/putty_output.png)
