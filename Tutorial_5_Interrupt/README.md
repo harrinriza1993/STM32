@@ -2,8 +2,8 @@
 
 ## Introduction  
 1. General description about `INTERRUPT`.  
-2. Generate a code for `INTERRUPT` using `STM32CubeMX`.  
-3. Test the `INTERRPUT` using `LED`.
+2. Generate a code for `TIMER INTERRUPT` using `STM32CubeMX`.  
+3. Generate a code for `GPIO INTERRUPT` using `STM32CubeMX`
 
 ## 1. General description about `INTERRUPT`
        When the processor does the main program, the main program is temporarily suspended by the instruction from the ISR(Interrupt Service Routine). This is called interrupt. Once the Processor finish the instruction from ISR then it  returns again  to main program from where it is suspended.
@@ -67,7 +67,10 @@ So automatically when the timer reaches 10000 the led toogles.
 - In left side of cubemax select GPIO.The input interrupt pin and output interrupt pin is shown.
  ![](images/gpio.png)
 - Click PC13 and set the GPIO mode either External Interrupt with Falling edge trigger detection or Raising edge trigger detection.
+  A rising edge (or positive edge) is the low-to-high transition. A falling edge (or negative edge) is the high-to-low transition.
  ![](images/gpio_mode.png)
+ - Click NVIC, enable the EXIT line[15 : 10] interrupts.
+ ![](images/enableNVIC.png)
 - Generate the source code.
 - Override the HAL_GPIO_EXIT_Callback function in main.c
 '''
