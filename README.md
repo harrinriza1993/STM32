@@ -8,3 +8,4 @@ Sample tutorial to bring up the pheriperals
 `Tutorial_3_UART:` Explanation of configuring UART.  
 `Tutorial_4_TIMER:` Explanation of configuring TIMER.  
 `Tutorial_5_INTERRUPT:` Explanation of configuring INTERRUPT.  
+`Tutorial_6_ADC:` Explanation of configuring ADC.  
